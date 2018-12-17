@@ -1,0 +1,17 @@
+body {
+  background-color: #F6F6F6;
+  font-family: 'OPTICIAN';
+}
+
+.header {
+  height: 12vh;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  align-items: center;
+}
+
+@font-face {
+  font-family: 'OPTICIAN';
+  src: url("../../font/Optiker-K.ttf");
+}

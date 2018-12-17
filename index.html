@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="Webdesign,developpement,alternance,ux,ui,travaillé,hetic,Hector,Travaillé, Hector Travaillé, Travaille">
+  <meta property="og:title" content="Hector_Travaillé">
+  <meta property="og:url" content="http://www.hectortrv.com/">
+  <meta name="theme-color" content="#000000">
+  <meta property="og:description" content="Bonjour à toi, je suis Hector Travaillé un Creative developper..">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="Bonjour à toi, je suis Hector Travaillé un Creative developper...">
+  <meta property="og:site_name" content="HectorTravaillé">
+  <title>ESHOP</title>
+  <link rel="stylesheet" href="style/css/style.css">
+</head>
+
+<body>
+
+  <div id="app">
+    <header class="Header">
+      <div class="cart">
+        <p>Panier [ {{ cart.length }} ]</p>
+      </div>
+    </header>
+    <section class="Section">
+      <div class="Section_Chemise">
+        <div class="Section_Title">
+          <p>chemises</p>
+        </div>
+      </div>
+      <product :premium="premium" @add-to-cart="updateCart"></product>
+    </section>
+  </div>
+
+
+
+
+  <!-- <div class="mask" onclick="start()">
+    <h1 class="mask_text">ENTER</h1>
+  </div>
+  <div class="container">
+    <p>ENTER</p>
+  </div> -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
+  <script src="hover.js">
+  </script>
+  <script src="clicked.js">
+  </script>
+  <script>
+    Vue.component('product', {
+      props: {
+        premium: {
+          type: Boolean,
+          required: true
+        }
+      },
+      template: `
+      <div class="product">
+
+        <div class="product-image">
+          <img class="product-image_image" :src="image" />
+        </div>
+        <section class="Desc">
+          <div class="product-info">
+            <div class="color">
+
+              <div class="color-box" v-for="(variant, index) in variants" :key="variant.variantId" :style="{ backgroundColor: variant.variantColor }" @mouseover="updateProduct(index)">
+              </div>
+            </div>
+
+            <h1 class="Title">{{ product }}</h1>
+        
+
+
+            <div class="price">
+            <div class="price_item" v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton: !inStock }">
+              +
+            </div>
+            <p>{{ shipping }}</p>
+            </div>
+          </div>
+        </section>
+      </div>
+   `,
+      data() {
+        return {
+          product: 'chemise en coton',
+          brand: 'Vue Mastery',
+          selectedVariant: 0,
+          details: ['80% coton', '20% polyester', 'Pour homme'],
+          variants: [{
+              variantId: 1,
+              variantColor: '#D8B690',
+              variantImage: 'img/Sandro2.jpg',
+              variantQuantity: 10
+            },
+            {
+              variantId: 2,
+              variantColor: '#171820',
+              variantImage: 'img/Sandro1.jpg',
+              variantQuantity: 10
+            }
+          ],
+          reviews: []
+        }
+      },
+      methods: {
+        addToCart() {
+          this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId)
+        },
+        updateProduct(index) {
+          this.selectedVariant = index
+        },
+        addReview(productReview) {
+          this.reviews.push(productReview)
+        }
+      },
+      computed: {
+        title() {
+          return this.brand + ' ' + this.product
+        },
+        image() {
+          return this.variants[this.selectedVariant].variantImage
+        },
+        inStock() {
+          return this.variants[this.selectedVariant].variantQuantity
+        },
+        shipping() {
+          if (this.premium) {
+            return "149.00€"
+          }
+          return 2.99
+        }
+      }
+    })
+
+
+    Vue.component('product-review', {
+      template: `
+    <form class="review-form" @submit.prevent="onSubmit">
+
+      <p class="error" v-if="errors.length">
+        <b>Please correct the following error(s):</b>
+        <ul>
+          <li v-for="error in errors">{{ error }}</li>
+        </ul>
+      </p>
+
+      <p>
+        <label for="name">Name:</label>
+        <input id="name" v-model="name">
+      </p>
+
+      <p>
+        <label for="review">Review:</label>
+        <textarea id="review" v-model="review"></textarea>
+      </p>
+
+      <p>
+        <label for="rating">Rating:</label>
+        <select id="rating" v-model.number="rating">
+          <option>5</option>
+          <option>4</option>
+          <option>3</option>
+          <option>2</option>
+          <option>1</option>
+        </select>
+      </p>
+
+      <p>
+        <input type="submit" value="Submit">
+      </p>
+
+  </form>
+  `,
+      data() {
+        return {
+          name: null,
+          review: null,
+          rating: null,
+          errors: []
+        }
+      },
+      methods: {
+        onSubmit() {
+          if (this.name && this.review && this.rating) {
+            let productReview = {
+              name: this.name,
+              review: this.review,
+              rating: this.rating
+            }
+            this.$emit('review-submitted', productReview)
+            this.name = null
+            this.review = null
+            this.rating = null
+          } else {
+            if (!this.name) this.errors.push("Name required.")
+            if (!this.review) this.errors.push("Review required.")
+            if (!this.rating) this.errors.push("Rating required.")
+          }
+        }
+      }
+    })
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        premium: true,
+        cart: []
+      },
+      methods: {
+        updateCart(id) {
+          this.cart.push(id)
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
